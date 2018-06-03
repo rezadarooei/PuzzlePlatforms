@@ -1,0 +1,16 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{4E1DD3C6-4E09-F5A0-235A-B78A09B10656}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "PuzzlePlatforms",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	]
+}

@@ -10,6 +10,16 @@ AMovingPlatform::AMovingPlatform()
 	PrimaryActorTick.bCanEverTick = true;
 	SetMobility(EComponentMobility::Movable);
 }
+
+void AMovingPlatform::BeginPlay()
+{
+	Super::BeginPlay();
+	if (HasAuthority()) {
+		SetReplicates(true);
+		SetReplicateMovement(true);
+	}
+}
+
 // Called every frame
 void AMovingPlatform::Tick(float DeltaTime)
 {

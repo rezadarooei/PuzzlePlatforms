@@ -17,8 +17,9 @@ public:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	UPROPERTY(EditAnywhere,Category="Speed")
+	UPROPERTY(EditAnywhere,Category="MyCategory")
 	float Speed=20;
-
+	UPROPERTY(EditAnywhere, Category = "MyCategory", Meta = (MakeEditWidget = true))
+	FVector TargetLocation;
 
 };

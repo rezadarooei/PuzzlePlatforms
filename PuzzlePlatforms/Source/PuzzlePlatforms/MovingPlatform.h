@@ -21,5 +21,7 @@ public:
 	float Speed=20;
 	UPROPERTY(EditAnywhere, Category = "MyCategory", Meta = (MakeEditWidget = true))
 	FVector TargetLocation;
-
+private:
+	FVector StartGlobalLocation;
+	FVector TargetGlobalLocation;
 };

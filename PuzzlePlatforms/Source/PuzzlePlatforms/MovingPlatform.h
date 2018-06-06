@@ -21,7 +21,13 @@ public:
 	float Speed=20;
 	UPROPERTY(EditAnywhere, Category = "MyCategory", Meta = (MakeEditWidget = true))
 	FVector TargetLocation;
+	void AddActiveTriggers();
+	void RemoveActiveTriggers();
+	
 private:
 	FVector StartGlobalLocation;
 	FVector TargetGlobalLocation;
+	UPROPERTY(EditAnywhere)
+	int32 ActiveTriggers = 1;
+
 };

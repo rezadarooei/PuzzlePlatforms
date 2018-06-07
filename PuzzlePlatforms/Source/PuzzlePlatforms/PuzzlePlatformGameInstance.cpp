@@ -31,5 +31,7 @@ void UPuzzlePlatformGameInstance::Join(const FString& Adress)
 	if (!ensure(Engine != nullptr)) return;
 	
 	Engine->AddOnScreenDebugMessage(0, 5, FColor::Green, FString::Printf(TEXT("Adress is: %s"),*Adress));
-	
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	if (!ensure(PlayerController != nullptr)) return;
+	PlayerController->ClientTravel(Adress, ETravelType::TRAVEL_Absolute);
 }

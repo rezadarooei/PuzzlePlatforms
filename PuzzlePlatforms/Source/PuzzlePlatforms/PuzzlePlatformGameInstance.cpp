@@ -5,6 +5,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "PlatformTrigger.h"
 #include "Blueprint/UserWidget.h"
+
 UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitializer & ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<UUserWidget> MenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
@@ -20,6 +21,14 @@ void UPuzzlePlatformGameInstance::Init()
 	UE_LOG(LogTemp, Warning, TEXT("Platform Trigger:%s"), *MenuClass->GetName())
 	UE_LOG(LogTemp, Warning, TEXT("Game Instance InIt"))
 	
+}
+
+void UPuzzlePlatformGameInstance::LoadMenu()
+{
+	if (!ensure(MenuClass != nullptr)) return;
+	UUserWidget* Menu = CreateWidget<UUserWidget>(this, MenuClass);
+	if (!ensure(Menu != nullptr)) return;
+	Menu->AddToViewport();
 }
 
 void UPuzzlePlatformGameInstance::Host()

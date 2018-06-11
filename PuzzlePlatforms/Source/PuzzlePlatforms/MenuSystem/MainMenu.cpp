@@ -10,11 +10,14 @@ bool UMainMenu::Initialize()
 	bool Sucess=Super::Initialize();
 	if (!Sucess) return false;
 	if (!ensure(Host != nullptr)) return false;
-	Host->OnClicked.AddDynamic(this, &UMainMenu::Cliked);
+	Host->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
 	return true;
 }
 
-void UMainMenu::Cliked()
+void UMainMenu::HostServer()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Host Cliked"))
+if (MenuInterface!=nullptr)
+	{
+	MenuInterface->Host();
+	}
 }

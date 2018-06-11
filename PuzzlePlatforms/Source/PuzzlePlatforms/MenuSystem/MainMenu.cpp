@@ -13,6 +13,11 @@ bool UMainMenu::Initialize()
 	Host->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
 	return true;
 }
+void UMainMenu::SetMenuInterface(IMenuInterface* MenuInterface)
+{
+	this->MenuInterface = MenuInterface;
+}
+
 
 void UMainMenu::HostServer()
 {

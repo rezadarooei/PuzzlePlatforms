@@ -14,14 +14,18 @@ UCLASS()
 class PUZZLEPLATFORMS_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
-
+public:
+	void SetMenuInterface(IMenuInterface* MenuInterface);
 private:
-		UPROPERTY(meta = (BindWidget))
-		class UButton* Host;
 	UPROPERTY(meta = (BindWidget))
-		class UButton* Join;
+	class UButton* Host;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* Join;
+
 protected:
 	virtual bool Initialize() override;
+
 	UFUNCTION()
 	void HostServer();
 

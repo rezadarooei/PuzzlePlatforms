@@ -7,15 +7,15 @@
 #include "MenuInterface.h"
 #include "MainMenu.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class PUZZLEPLATFORMS_API UMainMenu : public UUserWidget
 {
 	GENERATED_BODY()
 public:
 	void SetMenuInterface(IMenuInterface* MenuInterface);
+	void SetUp();
+	void TearDown();
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Host;

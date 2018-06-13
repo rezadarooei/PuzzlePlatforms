@@ -26,9 +26,9 @@ protected:
 	virtual bool Initialize() override;
  	
  	UFUNCTION()
- 	void QuitGame();
+ 	void QuitPressed();
  
  	UFUNCTION()
- 	void CancelMenu();
+ 	void CancelPressed();
 
 };

@@ -2,7 +2,7 @@
 
 #include "InGameMenu.h"
 #include "Components/Button.h"
-
+#include "Kismet/GameplayStatics.h"
 
 
 bool UInGameMenu::Initialize()
@@ -11,21 +11,25 @@ bool UInGameMenu::Initialize()
 	if (!Sucess) return false;
 
  	if (!ensure(CancelInGameButton != nullptr)) return false;
- 	CancelInGameButton->OnClicked.AddDynamic(this, &UInGameMenu::CancelMenu);
+ 	CancelInGameButton->OnClicked.AddDynamic(this, &UInGameMenu::CancelPressed);
  
  	if (!ensure(QuitInGameButton != nullptr)) return false;
- 	QuitInGameButton->OnClicked.AddDynamic(this, &UInGameMenu::QuitGame);
+ 	QuitInGameButton->OnClicked.AddDynamic(this, &UInGameMenu::QuitPressed);
 	return true;
 }
 
 
- void UInGameMenu::QuitGame()
+ void UInGameMenu::QuitPressed()
  {
- 
+	 if (MenuInterface) {
+		 TearDown();
+		 MenuInterface->LoadMainMenu();
+	 }
+
  }
  
- void UInGameMenu::CancelMenu()
+ void UInGameMenu::CancelPressed()
  {
- 
+	 TearDown();
  }
 

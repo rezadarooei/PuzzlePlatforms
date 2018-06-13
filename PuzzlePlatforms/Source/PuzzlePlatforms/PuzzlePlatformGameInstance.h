@@ -17,15 +17,24 @@ public:
 		UPuzzlePlatformGameInstance(const FObjectInitializer & ObjectInitializer);
 	
 		virtual void Init();
+
 		UFUNCTION(Exec)
 		void Host();
+
 		UFUNCTION(Exec)
 		void Join(const FString& Adress);
-		UFUNCTION(Exec,BlueprintCallable)
+
+		UFUNCTION(BlueprintCallable)
 		void LoadMenu();
+
+		UFUNCTION( BlueprintCallable)
+		void InGameLoadMenu();
 		
 private:
 
 		TSubclassOf<class UUserWidget> MenuClass;
+
+		TSubclassOf<class UUserWidget> InGameMenuClass;
+
 		class UMainMenu* Menu;
 };

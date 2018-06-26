@@ -37,6 +37,9 @@ private:
 	class UWidget* MainMenu;
 
 	UPROPERTY(meta = (BindWidget))
+	class UButton* QuitButton;
+
+	UPROPERTY(meta = (BindWidget))
 	class UEditableTextBox* IPAddressField;
 
 protected:
@@ -54,5 +57,6 @@ protected:
 	UFUNCTION()
 	void OpenMainMenu();
 
-	
+	UFUNCTION()
+	void QuitPressed();
 };

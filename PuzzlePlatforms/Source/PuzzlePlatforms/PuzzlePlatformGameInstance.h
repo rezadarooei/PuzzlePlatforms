@@ -27,11 +27,16 @@ public:
 		
 		virtual	void LoadMainMenu() override;
 
+		UFUNCTION()
+		virtual void QuitGame() override;
+
 		UFUNCTION(BlueprintCallable)
-		void LoadMenu();
+		void LoadMenuWidget();
 
 		UFUNCTION( BlueprintCallable)
 		void InGameLoadMenu();
+
+		
 		
 private:
 

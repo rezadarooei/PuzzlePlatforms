@@ -1,10 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PuzzlePlatformGameInstance.h"
+
 #include "Engine/Engine.h"
 #include "UObject/ConstructorHelpers.h"
 #include "PlatformTrigger.h"
 #include "Blueprint/UserWidget.h"
+#include "OnlineSubsystem.h"
+
 #include "Components/Widget.h"
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/MenuWidget.h"
@@ -26,11 +29,19 @@ UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitialize
 void UPuzzlePlatformGameInstance::Init()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Platform Trigger:%s"), *MenuClass->GetName())
-	UE_LOG(LogTemp, Warning, TEXT("Game Instance InIt"))
+	IOnlineSubsystem* SubSystem=IOnlineSubsystem::Get();
+	if (SubSystem) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *SubSystem->GetSubsystemName().ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Ptr not found"));
+	}
 	
 }
 
-void UPuzzlePlatformGameInstance::LoadMenu()
+void UPuzzlePlatformGameInstance::LoadMenuWidget()
 {
 	if (!ensure(MenuClass != nullptr)) return;
 	Menu = CreateWidget<UMainMenu>(this, MenuClass);
@@ -83,4 +94,12 @@ void UPuzzlePlatformGameInstance::LoadMainMenu()
 	APlayerController* PlayerController = GetFirstLocalPlayerController();
 	if (!ensure(PlayerController != nullptr)) return;
 	PlayerController->ClientTravel("/Game/MenuSystem/ManMenu?listen", ETravelType::TRAVEL_Absolute);
+}
+
+void UPuzzlePlatformGameInstance::QuitGame()
+{
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	if (!ensure(PlayerController != nullptr)) return;
+	const FString & Command = "quit";
+	PlayerController->ConsoleCommand(Command);
 }

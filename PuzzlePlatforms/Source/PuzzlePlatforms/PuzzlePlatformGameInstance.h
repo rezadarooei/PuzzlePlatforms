@@ -49,5 +49,9 @@ private:
 
 		void OnCreateSessionComplete(FName SessionName, bool Succeed);
 
+		void OnDestroySessionComplete(FName SessionName, bool Succeed);
+
+		void CreateSession();
+
 		IOnlineSessionPtr SessionInterface;
 };

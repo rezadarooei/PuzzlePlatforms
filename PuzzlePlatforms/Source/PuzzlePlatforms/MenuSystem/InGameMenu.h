@@ -14,7 +14,7 @@ class PUZZLEPLATFORMS_API UInGameMenu : public UMenuWidget
 {
 	GENERATED_BODY()
 private:
- 
+	
  	UPROPERTY(meta=(BindWidget))
  	class UButton* CancelInGameButton;
  

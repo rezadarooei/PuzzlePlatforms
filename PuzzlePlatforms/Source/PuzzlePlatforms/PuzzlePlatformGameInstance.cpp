@@ -13,6 +13,9 @@
 #include "Components/Widget.h"
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/MenuWidget.h"
+
+const static FName SESSION_NAME = TEXT("My session Game");
+
 UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitializer & ObjectInitializer)
 {
 	static ConstructorHelpers::FClassFinder<UUserWidget> MenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
@@ -31,6 +34,7 @@ UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitialize
 void UPuzzlePlatformGameInstance::Init()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Platform Trigger:%s"), *MenuClass->GetName())
+		//it gets from windows.ini and for this now it is null sub system
 	IOnlineSubsystem* SubSystem=IOnlineSubsystem::Get();
 	if (SubSystem)
 	{
@@ -39,6 +43,7 @@ void UPuzzlePlatformGameInstance::Init()
 		{
 			
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnCreateSessionComplete);
+			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnDestroySessionComplete);
 		}
 	}
 	else
@@ -67,11 +72,20 @@ void UPuzzlePlatformGameInstance::InGameLoadMenu()
 
 	Menu->SetMenuInterface(this);
 }
+
 void UPuzzlePlatformGameInstance::Host()
 {
 	if (SessionInterface.IsValid()) {
-		FOnlineSessionSettings SessionSetting;
-		SessionInterface->CreateSession(0, TEXT("My session Game"), SessionSetting);
+		auto ExistingSession=SessionInterface->GetNamedSession(SESSION_NAME);
+		if (ExistingSession != nullptr) 
+		{
+			SessionInterface->DestroySession(SESSION_NAME);
+		}
+		else
+		{
+			CreateSession();
+		}
+		
 	}
 }
 
@@ -94,6 +108,23 @@ void UPuzzlePlatformGameInstance::OnCreateSessionComplete(FName SessionName, boo
 	if (!ensure(World != nullptr)) return;
 	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
 }
+
+void UPuzzlePlatformGameInstance::OnDestroySessionComplete(FName SessionName, bool Succeed)
+{
+	if (Succeed)
+	{
+		CreateSession();
+	}
+}
+
+void UPuzzlePlatformGameInstance::CreateSession()
+{
+	if (SessionInterface.IsValid()) {
+		FOnlineSessionSettings SessionSetting;
+		SessionInterface->CreateSession(0, SESSION_NAME, SessionSetting);
+	}
+}
+
 void UPuzzlePlatformGameInstance::Join(const FString& Adress)
 {
 	if (Menu != nullptr)

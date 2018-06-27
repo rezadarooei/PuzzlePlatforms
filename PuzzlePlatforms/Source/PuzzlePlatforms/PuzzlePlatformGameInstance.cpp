@@ -26,9 +26,7 @@ UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitialize
 	static ConstructorHelpers::FClassFinder<UUserWidget> InGameMenuBPClass(TEXT("/Game/MenuSystem/WBP_LoadingInGame"));
 	if (!ensure(InGameMenuBPClass.Class != nullptr)) return;
 	InGameMenuClass = InGameMenuBPClass.Class;
-
 	
-
 }
 
 void UPuzzlePlatformGameInstance::Init()
@@ -44,6 +42,15 @@ void UPuzzlePlatformGameInstance::Init()
 			
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnCreateSessionComplete);
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnDestroySessionComplete);
+			
+			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnFindSessionsComplete);
+			SessionSearch = MakeShareable(new FOnlineSessionSearch());
+			if (SessionSearch.IsValid()) {
+
+				SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+				UE_LOG(LogTemp,Warning,TEXT("Sesiion Start"))
+			}
+			
 		}
 	}
 	else
@@ -115,6 +122,17 @@ void UPuzzlePlatformGameInstance::OnDestroySessionComplete(FName SessionName, bo
 	{
 		CreateSession();
 	}
+}
+
+void UPuzzlePlatformGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
+{
+	if (bWasSuccessful) {
+		UE_LOG(LogTemp,Warning,TEXT("It is finish"))
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("It is not complete"))
+	}
+
 }
 
 void UPuzzlePlatformGameInstance::CreateSession()

@@ -44,13 +44,7 @@ void UPuzzlePlatformGameInstance::Init()
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnDestroySessionComplete);
 			
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnFindSessionsComplete);
-			SessionSearch = MakeShareable(new FOnlineSessionSearch());
-			if (SessionSearch.IsValid()) {
-				SessionSearch->bIsLanQuery = true;
-				
-				SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
-				UE_LOG(LogTemp,Warning,TEXT("Sesiion Start"))
-			}
+			
 			
 		}
 	}
@@ -97,6 +91,17 @@ void UPuzzlePlatformGameInstance::Host()
 	}
 }
 
+void UPuzzlePlatformGameInstance::RefreshServerList()
+{
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+	if (SessionSearch.IsValid()) {
+		SessionSearch->bIsLanQuery = true;
+
+		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+		UE_LOG(LogTemp, Warning, TEXT("Sesiion Start"))
+	}
+}
+
 
 
 void UPuzzlePlatformGameInstance::OnCreateSessionComplete(FName SessionName, bool Succeed)
@@ -129,14 +134,17 @@ void UPuzzlePlatformGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 {
 	
 	
-		if (bWasSuccessful && SessionSearch.IsValid()) 
+		if (bWasSuccessful && SessionSearch.IsValid() && Menu!=nullptr) 
 		{
+			TArray<FString> ServerNames;
 			UE_LOG(LogTemp, Warning, TEXT("It is finish"))
 				for (const FOnlineSessionSearchResult& SearchResults : SessionSearch->SearchResults) 
 				{
 					
 					UE_LOG(LogTemp, Warning, TEXT("It is finish %s"), *SearchResults.GetSessionIdStr())
+					ServerNames.Add(SearchResults.GetSessionIdStr());
 				}
+			Menu->SetServerList(ServerNames);
 		}
 		
 	
@@ -158,15 +166,16 @@ void UPuzzlePlatformGameInstance::Join(const FString& Adress)
 {
 	if (Menu != nullptr)
 	{
-		Menu->TearDown();
+		//Menu->TearDown();
+		Menu->SetServerList({ "Reza","REza" });
 	}
-	UEngine* Engine = GetEngine();
-	if (!ensure(Engine != nullptr)) return;
-	
-	Engine->AddOnScreenDebugMessage(0, 5, FColor::Green, FString::Printf(TEXT("Adress is: %s"),*Adress));
-	APlayerController* PlayerController = GetFirstLocalPlayerController();
-	if (!ensure(PlayerController != nullptr)) return;
-	PlayerController->ClientTravel(Adress, ETravelType::TRAVEL_Absolute);
+// 	UEngine* Engine = GetEngine();
+// 	if (!ensure(Engine != nullptr)) return;
+// 	
+// 	Engine->AddOnScreenDebugMessage(0, 5, FColor::Green, FString::Printf(TEXT("Adress is: %s"),*Adress));
+// 	APlayerController* PlayerController = GetFirstLocalPlayerController();
+// 	if (!ensure(PlayerController != nullptr)) return;
+// 	PlayerController->ClientTravel(Adress, ETravelType::TRAVEL_Absolute);
 }
 
 void UPuzzlePlatformGameInstance::LoadMainMenu()

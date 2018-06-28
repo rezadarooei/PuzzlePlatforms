@@ -38,6 +38,7 @@ public:
 		void InGameLoadMenu();
 
 		
+		void RefreshServerList() override;
 		
 private:
 

@@ -14,8 +14,10 @@ class PUZZLEPLATFORMS_API UMainMenu : public UMenuWidget
 
 public:
 	UMainMenu(const FObjectInitializer & ObjectInitializer);
+
 	TSubclassOf<class UUserWidget> ServerRowClass;
 
+	void SetServerList(TArray<FString> ServerNames);
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* HostButton;

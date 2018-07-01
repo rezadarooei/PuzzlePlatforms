@@ -94,8 +94,9 @@ void UPuzzlePlatformGameInstance::Host()
 void UPuzzlePlatformGameInstance::RefreshServerList()
 {
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
-	if (SessionSearch.IsValid()) {
-		SessionSearch->bIsLanQuery = true;
+	if (SessionSearch.IsValid())
+	{
+		//SessionSearch->bIsLanQuery = true;
 
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 		UE_LOG(LogTemp, Warning, TEXT("Sesiion Start"))
@@ -106,7 +107,8 @@ void UPuzzlePlatformGameInstance::RefreshServerList()
 
 void UPuzzlePlatformGameInstance::OnCreateSessionComplete(FName SessionName, bool Succeed)
 {
-	if (!Succeed) {
+	if (!Succeed) 
+	{
 		UE_LOG(LogTemp, Warning, TEXT("Could Not create session"));
 		return;
 	}

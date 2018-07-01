@@ -18,6 +18,9 @@ public:
 	TSubclassOf<class UUserWidget> ServerRowClass;
 
 	void SetServerList(TArray<FString> ServerNames);
+
+	void SelectIndex(uint32 Index);
+
 private:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* HostButton;
@@ -65,4 +68,6 @@ protected:
 
 	UFUNCTION()
 	void QuitPressed();
+
+	TOptional<uint32> SelectedIndex;
 };

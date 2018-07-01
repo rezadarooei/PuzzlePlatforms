@@ -35,7 +35,7 @@ bool UMainMenu::Initialize()
 	if (!ensure(QuitButton != nullptr)) return false;
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::QuitPressed);
 	
-
+	
 	return true;
 }
 
@@ -53,19 +53,34 @@ void UMainMenu::SetServerList(TArray<FString> ServerNames)
 {
 	UWorld* World = GetWorld();
 	if (!ensure(World != nullptr)) return;
+
 	ServerList->ClearChildren();
+	int i = 0;
 	for (FString& ServerName : ServerNames) 
 	{
 		Raw = CreateWidget<UServerRaw>(World, ServerRowClass);
 		if (!ensure(Raw != nullptr)) return;
 		ServerList->AddChild(Raw);
 		Raw->ServerName->SetText(FText::FromString(ServerName));
+		Raw->Setup(this, i);
+		
+		i++;
 	}
 }
 
+void UMainMenu::SelectIndex(uint32 Index)
+{
+	SelectedIndex = Index;
+}
 
 void UMainMenu::JoinServer()
 {
+	if (SelectedIndex.IsSet()) {
+		UE_LOG(LogTemp,Warning,TEXT("selected index is %d"),SelectedIndex.GetValue())
+	}
+	else {
+		UE_LOG(LogTemp, Warning, TEXT("selected not index i"))
+	}
 	if (MenuInterface != nullptr)
 	{
 // 		if (!ensure(IPAddressField != nullptr)) return;

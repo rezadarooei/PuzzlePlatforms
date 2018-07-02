@@ -45,6 +45,7 @@ void UPuzzlePlatformGameInstance::Init()
 			
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnFindSessionsComplete);
 			
+			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnJoinSessioncomplete);
 			
 		}
 	}
@@ -164,21 +165,38 @@ void UPuzzlePlatformGameInstance::CreateSession()
 	}
 }
 
-void UPuzzlePlatformGameInstance::Join(const FString& Adress)
+void UPuzzlePlatformGameInstance::Join(uint32 Index)
 {
+	if (!SessionInterface.IsValid()) { return; };
+	if (!SessionSearch.IsValid()) { return; };
 	if (Menu != nullptr)
 	{
-		//Menu->TearDown();
-		Menu->SetServerList({ "Reza","REza" });
+		Menu->TearDown();
+
 	}
-// 	UEngine* Engine = GetEngine();
-// 	if (!ensure(Engine != nullptr)) return;
-// 	
-// 	Engine->AddOnScreenDebugMessage(0, 5, FColor::Green, FString::Printf(TEXT("Adress is: %s"),*Adress));
-// 	APlayerController* PlayerController = GetFirstLocalPlayerController();
-// 	if (!ensure(PlayerController != nullptr)) return;
-// 	PlayerController->ClientTravel(Adress, ETravelType::TRAVEL_Absolute);
+
+	SessionInterface->JoinSession(0, SESSION_NAME, SessionSearch->SearchResults[Index]);
 }
+
+void UPuzzlePlatformGameInstance::OnJoinSessioncomplete(FName SessionNaRme, EOnJoinSessionCompleteResult::Type Result)
+{
+	if (!SessionInterface.IsValid()) { return; }
+
+	FString Adress;
+	if (!SessionInterface->GetResolvedConnectString(SessionNaRme, Adress)) {
+		UE_LOG(LogTemp, Warning, TEXT("Could not get Connect string"))
+			return;
+	};
+	UEngine* Engine = GetEngine();
+	if (!ensure(Engine != nullptr)) return;
+
+	Engine->AddOnScreenDebugMessage(0, 5, FColor::Green, FString::Printf(TEXT("Adress is: %s"), *Adress));
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	if (!ensure(PlayerController != nullptr)) return;
+	PlayerController->ClientTravel(Adress, ETravelType::TRAVEL_Absolute);
+}
+
+
 
 void UPuzzlePlatformGameInstance::LoadMainMenu()
 {

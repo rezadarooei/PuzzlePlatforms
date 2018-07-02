@@ -6,6 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "MenuSystem/MenuInterface.h"
 #include "OnlineSessionInterface.h"
+#include "OnlineSessionInterface.h"
 #include "PuzzlePlatformGameInstance.generated.h"
 
 UCLASS()
@@ -23,7 +24,7 @@ public:
 		void Host() override;
 
 		UFUNCTION(Exec)
-		void Join(const FString& Adress) override;
+		void Join(uint32 Index) override;
 
 		
 		virtual	void LoadMainMenu() override;
@@ -53,6 +54,8 @@ private:
 		void OnDestroySessionComplete(FName SessionName, bool Succeed);
 
 		void OnFindSessionsComplete(bool bWasSuccessful);
+
+		void OnJoinSessioncomplete(FName SessionNaRme, EOnJoinSessionCompleteResult::Type Result);
 
 		void CreateSession();
 

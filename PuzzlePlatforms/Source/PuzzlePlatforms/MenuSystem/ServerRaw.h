@@ -24,7 +24,7 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* RawButton;
-	
+
 	UFUNCTION()
 	void OnClicked();
 

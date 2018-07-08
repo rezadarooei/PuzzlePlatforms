@@ -14,6 +14,7 @@
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/MenuWidget.h"
 
+
 const static FName SESSION_NAME = TEXT("My session Game");
 
 UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitializer & ObjectInitializer)
@@ -26,7 +27,6 @@ UPuzzlePlatformGameInstance::UPuzzlePlatformGameInstance(const FObjectInitialize
 	static ConstructorHelpers::FClassFinder<UUserWidget> InGameMenuBPClass(TEXT("/Game/MenuSystem/WBP_LoadingInGame"));
 	if (!ensure(InGameMenuBPClass.Class != nullptr)) return;
 	InGameMenuClass = InGameMenuBPClass.Class;
-	
 }
 
 void UPuzzlePlatformGameInstance::Init()
@@ -34,17 +34,20 @@ void UPuzzlePlatformGameInstance::Init()
 	UE_LOG(LogTemp, Warning, TEXT("Platform Trigger:%s"), *MenuClass->GetName())
 		//it gets from windows.ini and for this now it is null sub system
 	IOnlineSubsystem* SubSystem=IOnlineSubsystem::Get();
+	UE_LOG(LogTemp,Warning,TEXT("it is sub system %s"),*SubSystem->GetSubsystemName().ToString())
 	if (SubSystem)
 	{
 		 SessionInterface = SubSystem->GetSessionInterface();
+		
 		if (SessionInterface.IsValid())
 		{
-			
+			//it tells when it creates fully
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnCreateSessionComplete);
+
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnDestroySessionComplete);
 			
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnFindSessionsComplete);
-			
+		
 			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformGameInstance::OnJoinSessioncomplete);
 			
 		}
@@ -92,17 +95,7 @@ void UPuzzlePlatformGameInstance::Host()
 	}
 }
 
-void UPuzzlePlatformGameInstance::RefreshServerList()
-{
-	SessionSearch = MakeShareable(new FOnlineSessionSearch());
-	if (SessionSearch.IsValid())
-	{
-		//SessionSearch->bIsLanQuery = true;
 
-		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
-		UE_LOG(LogTemp, Warning, TEXT("Sesiion Start"))
-	}
-}
 
 
 
@@ -133,34 +126,57 @@ void UPuzzlePlatformGameInstance::OnDestroySessionComplete(FName SessionName, bo
 	}
 }
 
+void UPuzzlePlatformGameInstance::RefreshServerList()
+{
+	//new keyword create session to heap not on stack.Make Shareable COnvert c++ Pointer to reference counted pointer
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+	if (SessionSearch.IsValid())
+	{
+		//SessionSearch->bIsLanQuery = true;
+		SessionSearch->MaxSearchResults = 100;
+		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+		UE_LOG(LogTemp, Warning, TEXT("Sesiion Start"))
+	}
+}
+
 void UPuzzlePlatformGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 {
-	
-	
+		//Session Search is for finding the session. && Menu!=nullptr using this becouse we want T array to se on serverlist
+
 		if (bWasSuccessful && SessionSearch.IsValid() && Menu!=nullptr) 
 		{
 			TArray<FString> ServerNames;
-			UE_LOG(LogTemp, Warning, TEXT("It is finish"))
+			
+				//using & to reference when you want to work with original items and will not modify them.
+				//Session Search is construct.and contains some parameter such as search result and it is Tarray
 				for (const FOnlineSessionSearchResult& SearchResults : SessionSearch->SearchResults) 
 				{
 					
-					UE_LOG(LogTemp, Warning, TEXT("It is finish %s"), *SearchResults.GetSessionIdStr())
+					UE_LOG(LogTemp, Warning, TEXT("Founded Session Name is: %s"), *SearchResults.GetSessionIdStr())
 					ServerNames.Add(SearchResults.GetSessionIdStr());
 				}
 			Menu->SetServerList(ServerNames);
 		}
-		
-	
-
+		UE_LOG(LogTemp, Warning, TEXT("It is finish"))
 }
 
+
+//Create Session with this setting
 void UPuzzlePlatformGameInstance::CreateSession()
 {
-	if (SessionInterface.IsValid()) {
+	if (SessionInterface.IsValid())
+	{
+		//setting of session creation
 		FOnlineSessionSettings SessionSetting;
-		SessionSetting.bIsLANMatch = true;
+
+		SessionSetting.bIsLANMatch = false;
+
 		SessionSetting.NumPublicConnections = 2;
+		//shows it is not private
 		SessionSetting.bShouldAdvertise = true;
+
+		SessionSetting.bUsesPresence = true;
 		SessionInterface->CreateSession(0, SESSION_NAME, SessionSetting);
 	}
 }
@@ -183,11 +199,14 @@ void UPuzzlePlatformGameInstance::OnJoinSessioncomplete(FName SessionNaRme, EOnJ
 	if (!SessionInterface.IsValid()) { return; }
 
 	FString Adress;
-	if (!SessionInterface->GetResolvedConnectString(SessionNaRme, Adress)) {
+	if (!SessionInterface->GetResolvedConnectString(SessionNaRme, Adress))
+	{
 		UE_LOG(LogTemp, Warning, TEXT("Could not get Connect string"))
 			return;
 	};
+
 	UEngine* Engine = GetEngine();
+
 	if (!ensure(Engine != nullptr)) return;
 
 	Engine->AddOnScreenDebugMessage(0, 5, FColor::Green, FString::Printf(TEXT("Adress is: %s"), *Adress));

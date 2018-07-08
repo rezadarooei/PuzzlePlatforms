@@ -58,6 +58,7 @@ private:
 		void OnJoinSessioncomplete(FName SessionNaRme, EOnJoinSessionCompleteResult::Type Result);
 
 		void CreateSession();
+		// it doesent need * becaouse it is share pointer
 
 		IOnlineSessionPtr SessionInterface;
 

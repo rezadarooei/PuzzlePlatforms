@@ -15,5 +15,4 @@ void UServerRaw::Setup(class UMainMenu* InParent, uint32 InIndex)
 void UServerRaw::OnClicked()
 {
 	Parent->SelectIndex(Index);
-
 }

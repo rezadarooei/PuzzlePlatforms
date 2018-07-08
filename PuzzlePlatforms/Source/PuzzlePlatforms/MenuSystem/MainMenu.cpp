@@ -10,6 +10,7 @@
 
 UMainMenu::UMainMenu(const FObjectInitializer & ObjectInitializer)
 {
+	//Create server row class because we want to use it
 	static ConstructorHelpers::FClassFinder<UUserWidget> ServerRow_BPClass(TEXT("/Game/MenuSystem/WBP_ServerRaw"));
 	if (!ensure(ServerRow_BPClass.Class != nullptr)) return;
 	ServerRowClass = ServerRow_BPClass.Class;
@@ -61,6 +62,7 @@ void UMainMenu::SetServerList(TArray<FString> ServerNames)
 		Raw = CreateWidget<UServerRaw>(World, ServerRowClass);
 		if (!ensure(Raw != nullptr)) return;
 		ServerList->AddChild(Raw);
+		//Server Name is Utext Block
 		Raw->ServerName->SetText(FText::FromString(ServerName));
 		Raw->Setup(this, i);
 		
@@ -78,15 +80,12 @@ void UMainMenu::JoinServer()
 	if (SelectedIndex.IsSet() && MenuInterface!=nullptr) 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("selected index is %d"), SelectedIndex.GetValue())
-			MenuInterface->Join(SelectedIndex.GetValue());
+		MenuInterface->Join(SelectedIndex.GetValue());
 	}
 	else 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("selected not index i"))
 	}
-	
-
-
 }
 
 void UMainMenu::OpenJoinMenu()

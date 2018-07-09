@@ -69,5 +69,7 @@ protected:
 	UFUNCTION()
 	void QuitPressed();
 
+	void UpdateChildren();
+
 	TOptional<uint32> SelectedIndex;
 };

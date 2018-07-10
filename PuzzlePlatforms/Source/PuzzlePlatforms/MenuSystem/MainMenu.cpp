@@ -50,20 +50,24 @@ if (MenuInterface!=nullptr)
 	}
 }
 
-void UMainMenu::SetServerList(TArray<FString> ServerNames)
+void UMainMenu::SetServerList(TArray<FserverData> ServerNames)
 {
 	UWorld* World = GetWorld();
 	if (!ensure(World != nullptr)) return;
 
 	ServerList->ClearChildren();
 	int i = 0;
-	for (FString& ServerName : ServerNames) 
+	for (FserverData& ServerData : ServerNames) 
 	{
 		Raw = CreateWidget<UServerRaw>(World, ServerRowClass);
 		if (!ensure(Raw != nullptr)) return;
 		ServerList->AddChild(Raw);
 		//Server Name is Utext Block
-		Raw->ServerName->SetText(FText::FromString(ServerName));
+		Raw->ServerName->SetText(FText::FromString(ServerData.Name));
+		Raw->HostUser->SetText(FText::FromString(ServerData.HostUserName));
+		FString FractionText = FString::Printf(TEXT("%d/%d"), ServerData.CurrentPlayer, ServerData.MaxPlayer);
+		Raw->ConectionFraction->SetText(FText::FromString(FractionText));
+
 		Raw->Setup(this, i);
 		
 		i++;
@@ -75,6 +79,7 @@ void UMainMenu::SelectIndex(uint32 Index)
 	SelectedIndex = Index;
 	UpdateChildren();
 }
+//update each item selected or not
 
 void UMainMenu::UpdateChildren()
 {
@@ -83,6 +88,7 @@ void UMainMenu::UpdateChildren()
 		auto Row=Cast<UServerRaw>(ServerList->GetChildAt(i));
 		if (Row != nullptr) 
 		{
+			//true if selectedIndex=current Index
 			Row->Selected = (SelectedIndex.IsSet() && SelectedIndex.GetValue() == i);
 		}
 	}

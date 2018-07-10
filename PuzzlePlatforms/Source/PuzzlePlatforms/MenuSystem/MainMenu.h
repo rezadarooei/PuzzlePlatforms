@@ -5,7 +5,15 @@
 #include "CoreMinimal.h"
 #include "MenuWidget.h"
 #include "MainMenu.generated.h"
-
+USTRUCT()
+struct FserverData
+{
+	GENERATED_BODY()
+	FString Name;
+	uint16 CurrentPlayer;
+	uint16 MaxPlayer;
+	FString HostUserName;
+};
 
 UCLASS()
 class PUZZLEPLATFORMS_API UMainMenu : public UMenuWidget
@@ -17,7 +25,7 @@ public:
 
 	TSubclassOf<class UUserWidget> ServerRowClass;
 
-	void SetServerList(TArray<FString> ServerNames);
+	void SetServerList(TArray<FserverData > ServerNames);
 
 	void SelectIndex(uint32 Index);
 

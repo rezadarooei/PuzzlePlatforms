@@ -147,17 +147,21 @@ void UPuzzlePlatformGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 		if (bWasSuccessful && SessionSearch.IsValid() && Menu!=nullptr) 
 		{
 			
-			TArray<FString> ServerNames;
-			ServerNames.Add("Test Server1");
-			ServerNames.Add("Test Server2");
-			ServerNames.Add("Test Server3");
+			TArray<FserverData> ServerNames;
+			
 				//using & to reference when you want to work with original items and will not modify them.
 				//Session Search is construct.and contains some parameter such as search result and it is Tarray
 				for (const FOnlineSessionSearchResult& SearchResults : SessionSearch->SearchResults) 
 				{
-					
+					FserverData Data;
+					Data.Name = SearchResults.GetSessionIdStr();
+					Data.MaxPlayer = SearchResults.Session.NumOpenPublicConnections;
+					Data.MaxPlayer = SearchResults.Session.SessionSettings.NumPublicConnections;
+					Data.HostUserName = SearchResults.Session.OwningUserName;
 					UE_LOG(LogTemp, Warning, TEXT("Founded Session Name is: %s"), *SearchResults.GetSessionIdStr())
-					ServerNames.Add(SearchResults.GetSessionIdStr());
+						UE_LOG(LogTemp, Warning, TEXT("Founded Ping is %i"), Data.MaxPlayer)
+					ServerNames.Add(Data);
+
 				}
 			Menu->SetServerList(ServerNames);
 		}
@@ -172,8 +176,16 @@ void UPuzzlePlatformGameInstance::CreateSession()
 	{
 		//setting of session creation
 		FOnlineSessionSettings SessionSetting;
-
-		SessionSetting.bIsLANMatch = false;
+		IOnlineSubsystem* SubSystem = IOnlineSubsystem::Get();
+		FString SubSystemName = SubSystem->GetSubsystemName().ToString();
+		if (SubSystemName == "NULL") 
+		{
+			SessionSetting.bIsLANMatch = true;
+		}
+		else
+		{
+			SessionSetting.bIsLANMatch = false;
+		}
 
 		SessionSetting.NumPublicConnections = 2;
 		//shows it is not private

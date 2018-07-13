@@ -28,6 +28,7 @@ public:
 	void SetServerList(TArray<FserverData > ServerNames);
 
 	void SelectIndex(uint32 Index);
+	
 
 private:
 	UPROPERTY(meta = (BindWidget))
@@ -57,6 +58,18 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	class UPanelWidget* ServerList;
 
+	UPROPERTY(meta = (BindWidget))
+	class UEditableText* ServerHostName;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* ConfirmHostMenuButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* CancelHostMenuButton;
+
+	UPROPERTY(meta = (BindWidget))
+	class UWidget* HostMenu;
+
 	class UServerRaw* Raw;
 
 protected:
@@ -80,4 +93,10 @@ protected:
 	void UpdateChildren();
 
 	TOptional<uint32> SelectedIndex;
+
+	UFUNCTION()
+	void OpenHostMenu();
+
+
+
 };

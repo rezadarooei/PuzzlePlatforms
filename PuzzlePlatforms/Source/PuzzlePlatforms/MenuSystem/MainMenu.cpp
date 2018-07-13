@@ -7,6 +7,7 @@
 #include "UObject/ConstructorHelpers.h"
 #include "MenuSystem/ServerRaw.h"
 #include "Components/TextBlock.h"
+#include "Components/EditableText.h"
 
 UMainMenu::UMainMenu(const FObjectInitializer & ObjectInitializer)
 {
@@ -22,7 +23,7 @@ bool UMainMenu::Initialize()
 	if (!Sucess) return false;
 
 	if (!ensure(HostButton != nullptr)) return false;
-	HostButton->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
+	HostButton->OnClicked.AddDynamic(this, &UMainMenu::OpenHostMenu);
 
 	if (!ensure(JoinButton != nullptr)) return false;
 	JoinButton->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
@@ -36,6 +37,11 @@ bool UMainMenu::Initialize()
 	if (!ensure(QuitButton != nullptr)) return false;
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::QuitPressed);
 	
+	if (!ensure(ConfirmHostMenuButton != nullptr)) return false;
+	ConfirmHostMenuButton->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
+	
+	if (!ensure(CancelHostMenuButton != nullptr)) return false;
+	CancelHostMenuButton->OnClicked.AddDynamic(this, &UMainMenu::OpenMainMenu);
 	
 	return true;
 }
@@ -44,24 +50,34 @@ bool UMainMenu::Initialize()
 
 void UMainMenu::HostServer()
 {
-if (MenuInterface!=nullptr)
+	if (MenuInterface!=nullptr)
 	{
-	MenuInterface->Host();
+
+		FString ServerName = ServerHostName->GetText().ToString();
+		MenuInterface->Host(ServerName);
 	}
+}
+
+void UMainMenu::OpenHostMenu()
+{
+	if (!ensure(MenuSwitcher != nullptr)) return;
+	MenuSwitcher->SetActiveWidget(HostMenu);
+	
+	
 }
 
 void UMainMenu::SetServerList(TArray<FserverData> ServerNames)
 {
-	UWorld* World = GetWorld();
+	UWorld* World = this->GetWorld();
 	if (!ensure(World != nullptr)) return;
 
 	ServerList->ClearChildren();
-	int i = 0;
+	uint32 i = 0;
 	for (FserverData& ServerData : ServerNames) 
 	{
 		Raw = CreateWidget<UServerRaw>(World, ServerRowClass);
 		if (!ensure(Raw != nullptr)) return;
-		ServerList->AddChild(Raw);
+		
 		//Server Name is Utext Block
 		Raw->ServerName->SetText(FText::FromString(ServerData.Name));
 		Raw->HostUser->SetText(FText::FromString(ServerData.HostUserName));
@@ -70,7 +86,8 @@ void UMainMenu::SetServerList(TArray<FserverData> ServerNames)
 
 		Raw->Setup(this, i);
 		
-		i++;
+		++i;
+		ServerList->AddChild(Raw);
 	}
 }
 
@@ -93,6 +110,8 @@ void UMainMenu::UpdateChildren()
 		}
 	}
 }
+
+
 
 void UMainMenu::JoinServer()
 {

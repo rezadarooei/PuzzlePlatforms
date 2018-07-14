@@ -40,6 +40,8 @@ public:
 
 		
 		void RefreshServerList() override;
+
+		void StartSession();
 		
 private:
 

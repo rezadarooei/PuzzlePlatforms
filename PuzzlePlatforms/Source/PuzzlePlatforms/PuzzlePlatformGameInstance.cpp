@@ -141,6 +141,14 @@ void UPuzzlePlatformGameInstance::RefreshServerList()
 	}
 }
 
+void UPuzzlePlatformGameInstance::StartSession()
+{
+	if (SessionInterface.IsValid()) 
+	{
+		SessionInterface->StartSession(SESSION_NAME);
+	}
+}
+
 void UPuzzlePlatformGameInstance::OnFindSessionsComplete(bool bWasSuccessful)
 {
 		//Session Search is for finding the session. && Menu!=nullptr using this becouse we want T array to see on serverlist
